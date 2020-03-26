@@ -8,23 +8,42 @@
 	<title>Insert title here</title>
 </h:head>
 <h:body>
+	<h1>Novo Livro</h1>
 	<h:form>
-		<h:messages />
+		<h:messages id="messages" />
 		<fieldset>
 			<legend>Dados do Livro</legend>
 			<h:panelGrid columns="2">
 				<h:outputLabel value="Título: " for="titulo" />
-				<h:inputText value="#{livroBean.livro.titulo}" id="titulo" />
+				<h:inputText value="#{livroBean.livro.titulo}" id="titulo"
+					required="true" requiredMessage="Título obrigatório"
+					validatorMessage="título não pode ser superior a 40 letras">
+					<f:validateLength maximum="40" />
+					<f:ajax event="blur" render="messages" />
+				</h:inputText>
 
 				<h:outputLabel value="ISBN " for="isbn" />
-				<h:inputText value="#{livroBean.livro.isbn}" id="isbn" />
+				<h:inputText value="#{livroBean.livro.isbn}" id="isbn"
+					validator="#{livroBean.comecaComDigitoUm}">
+					<f:ajax event="blur" render="messages" />
+				</h:inputText>
 
 				<h:outputLabel value="Preço: " for="preco" />
-				<h:inputText value="#{livroBean.livro.preco}" id="preco" />
+				<h:inputText value="#{livroBean.livro.preco}" id="preco"
+					required="true" requiredMessage="Preço é obrigatório"
+					validatorMessage="Preço não pode ser menor do que R$ 1,00 e maior do que R$ 1000,00">
+					<f:validateDoubleRange minimum="1" maximum="1000" />
+					<f:ajax event="blur" render="messages" />
+				</h:inputText>
 
 				<h:outputLabel value="Data: " for="dataLancamento" />
-				<h:inputText value="#{livroBean.livro.dataLancamento}"
-					id="dataLancamento" />
+				<h:inputText value="#{livroBean.livro.dataLancamento.time}"
+					id="dataLancamento" required="true"
+					requiredMessage="Data de Lançamento é obrigatório">
+					<f:ajax event="blur" render="messages" />
+					<f:convertDateTime pattern="dd/MM/yyyy"
+						timeZone="America/Sao_Paulo" />
+				</h:inputText>
 
 			</h:panelGrid>
 		</fieldset>
@@ -39,10 +58,13 @@
 						itemLabel="#{autor.nome}" itemValue="#{autor.id}" />
 				</h:selectOneMenu>
 				<h:commandButton value="Gravar Autor"
-					action="#{livroBean.gravarAutor}" />
+					action="#{livroBean.gravarAutor}">
+					<f:ajax execute="autor" render="tabelaAutores messages" />
+				</h:commandButton>
 
 			</h:panelGrid>
-			<h:dataTable value="#{livroBean.autoresDoLivro}" var="autor">
+			<h:dataTable value="#{livroBean.autoresDoLivro}" var="autor"
+				id="tabelaAutores">
 				<h:column>
 					<h:outputText value="#{autor.nome}" />
 				</h:column>
@@ -50,11 +72,16 @@
 		</fieldset>
 
 		<h:panelGrid columns="2" style="margin-top:8px;">
-			<h:commandButton action="#{livroBean.gravar}" value="Gravar" />
-			<h:commandButton action="#{livroBean.limpar}" value="Limpar" />
+			<h:commandButton action="#{livroBean.gravar}" value="Gravar">
+				<f:ajax execute="@form"
+					render="@form :formTabelaLivros:tabelaLivros" />
+			</h:commandButton>
+			<h:commandButton action="#{livroBean.limpar}" value="Limpar">
+				<f:ajax execute="@form" render="@form" />
+			</h:commandButton>
 		</h:panelGrid>
 	</h:form>
-	<h:form style="margin-top:8px;">
+	<h:form style="margin-top:8px;" id="formTabelaLivros">
 		<h:dataTable value="#{livroBean.livros}" var="livro" id="tabelaLivros">
 
 			<h:column>
@@ -74,9 +101,10 @@
 
 			<h:column>
 				<f:facet name="header">Data</f:facet>
-				<h:outputText value="#{livro.dataLancamento}" />
+				<h:outputText value="#{livro.dataLancamento.time}">
+					<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America_SaoPaulo" />
+				</h:outputText>
 			</h:column>
-
 
 		</h:dataTable>
 	</h:form>

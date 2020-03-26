@@ -1,6 +1,7 @@
 package br.com.alura.livraria.modelo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -18,7 +19,7 @@ public class Livro {
 	private String titulo;
 	private String isbn;
 	private double preco;
-	private String dataLancamento;
+	private Calendar dataLancamento = Calendar.getInstance();
 
 	@ManyToMany
 	private List<Autor> autores = new ArrayList<Autor>();
@@ -66,12 +67,16 @@ public class Livro {
 		this.preco = preco;
 	}
 
-	public String getDataLancamento() {
+	public Calendar getDataLancamento() {
 		return dataLancamento;
 	}
 
-	public void setDataLancamento(String dataLancamento) {
+	public void setDataLancamento(Calendar dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+
+	public void setAutores(List<Autor> autores) {
+		this.autores = autores;
 	}
 
 }
