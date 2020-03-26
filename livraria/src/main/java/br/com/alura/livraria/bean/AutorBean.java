@@ -5,6 +5,7 @@ import javax.faces.bean.ViewScoped;
 
 import br.com.alura.livraria.dao.DAO;
 import br.com.alura.livraria.modelo.Autor;
+import br.com.alura.livraria.util.RedirectView;
 
 @ManagedBean
 @ViewScoped
@@ -15,12 +16,12 @@ public class AutorBean {
 		return autor;
 	}
 
-	public String gravar() {
+	public RedirectView gravar() {
 		System.out.println("Gravando autor " + this.autor.getNome());
 
 		new DAO<Autor>(Autor.class).adiciona(this.autor);
 		this.autor = new Autor();
-		
-		return "livro?faces-redirect=true";
+
+		return new RedirectView("livro");
 	}
 }
